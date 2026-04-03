@@ -39,7 +39,7 @@ When you run this skill in a directory, it creates:
 
 **IMPORTANT:** This skill requires both MCP servers to be configured before it can create your project:
 
-1. **oscar64docs MCP Server** (REQUIRED) - Provides compiler documentation
+1. **oscar64 MCP Server** (REQUIRED) - Provides compiler documentation
 2. **c64debug MCP Server** (REQUIRED) - Provides debugging capabilities and VICE integration
 
 If either MCP server is missing, the skill will:
