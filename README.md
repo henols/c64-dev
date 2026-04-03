@@ -4,7 +4,7 @@ A Claude Code skill that automates the setup of a complete Commodore 64 developm
 
 ## Features
 
-- Validates MCP server availability (oscar64 and c64debug)
+- Validates MCP server availability (oscar64docs and c64debug)
 - Checks for oscar64 compiler installation
 - Creates proper project structure with source directories
 - Generates Makefile for building C64 programs
@@ -39,7 +39,7 @@ When you run this skill in a directory, it creates:
 
 **IMPORTANT:** This skill requires both MCP servers to be configured before it can create your project:
 
-1. **oscar64 MCP Server** (REQUIRED) - Provides compiler documentation
+1. **oscar64docs MCP Server** (REQUIRED) - Provides compiler documentation
 2. **c64debug MCP Server** (REQUIRED) - Provides debugging capabilities and VICE integration
 
 If either MCP server is missing, the skill will:
