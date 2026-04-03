@@ -305,6 +305,40 @@ This is a Commodore 64 project written in C and compiled with oscar64. The proje
 
 **You must use these MCP servers** - they are not optional. Reference the oscar64 manual when writing C code, and use c64debug tools for all testing and debugging.
 
+## Development Philosophy: Facts Over Guesswork
+
+**CRITICAL DEVELOPMENT PRINCIPLE:**
+
+This project has access to **real documentation** and **real debugging tools**. You MUST use them:
+
+### ✅ DO: Use Real Facts
+- **Read the oscar64 manual** via `ReadMcpResourceTool(server="oscar64docs", uri="docs://oscar64/manual")`
+  - When unsure about compiler features, syntax, or C64 APIs → READ THE MANUAL
+  - When implementing platform-specific code → CONSULT THE DOCUMENTATION
+  - The manual contains the ACTUAL capabilities and limitations - not assumptions
+
+- **Use breakpoints and real debugging** via c64debug tools
+  - When code doesn't work as expected → SET BREAKPOINTS and INSPECT
+  - When investigating crashes → READ REGISTERS and MEMORY at the crash point
+  - When validating logic → STEP THROUGH THE CODE and OBSERVE actual values
+  - The debugger shows ACTUAL execution - not guesses
+
+### ❌ DON'T: Rely on Guesswork
+- **Never assume** compiler behavior - read the documentation
+- **Never guess** why code crashes - use breakpoints and inspect registers
+- **Never assume** memory values - use `mcp__c64debug__memory_read` to see actual data
+- **Never work blind** - you have debugging tools, use them
+
+### Why This Matters
+
+**Guesswork is good for exploration**, but **real facts are essential for success**:
+- The oscar64 manual documents EXACTLY what the compiler supports
+- The c64debug tools show EXACTLY what the C64 is doing
+- One breakpoint shows more truth than ten guesses
+- One documentation lookup prevents hours of debugging
+
+**These MCP servers exist specifically to provide REAL INFORMATION. Use them.**
+
 ## Build System
 
 The project uses a Makefile-based build system with the oscar64 compiler. Key commands:
@@ -380,18 +414,26 @@ Use the c64debug tools to interact with the running C64:
 
 ## Common Debugging Patterns
 
+**REMEMBER: Use real debugging tools, not guesswork. You have full access to the C64's internal state.**
+
 When debugging crashes or unexpected behavior:
-1. Check `get_monitor_state` to see stop reason and PC
-2. Read registers with `get_registers` to inspect A, X, Y, SP
-3. Read memory around PC to see current instructions
-4. Set breakpoints at key game loop points
-5. Step through code with `execute(action="step")`
+1. Check `get_monitor_state` to see ACTUAL stop reason and PC - don't assume why it crashed
+2. Read registers with `get_registers` to inspect ACTUAL values of A, X, Y, SP - don't guess register contents
+3. Read memory around PC to see ACTUAL instructions executing - don't assume code flow
+4. Set breakpoints at key game loop points - see EXACTLY where execution goes
+5. Step through code with `execute(action="step")` - watch ACTUAL execution, not assumed logic
 
 When implementing new features:
-1. Set breakpoints at entry points
-2. Use `memory_read` to verify data structures
-3. Capture display to verify visual changes
-4. Use `wait_for_state` to ensure stable execution state
+1. Set breakpoints at entry points - verify code ACTUALLY reaches where you expect
+2. Use `memory_read` to verify data structures contain ACTUAL values - don't trust assumptions
+3. Capture display to verify ACTUAL visual output - see what's really on screen
+4. Use `wait_for_state` to ensure stable execution state before inspecting
+
+**When in doubt:**
+- Unsure about compiler feature? → Read oscar64 manual
+- Code not working? → Set breakpoint and inspect
+- Crash happening? → Get registers and memory at crash point
+- Data looks wrong? → Read actual memory contents
 ```
 
 **IMPORTANT:** Only create if CLAUDE.md doesn't exist. If it exists, inform the user and skip creation.
