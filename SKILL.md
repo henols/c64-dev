@@ -1,6 +1,6 @@
 ---
 name: c64-dev
-description: Sets up a C64 development environment with oscar64docs and c64debug. Use when the user wants to create or initialize a C64 project.
+description: Sets up a C64 development environment with oscar64-docs and c64-dev-tools. Use when the user wants to create or initialize a C64 project.
 metadata:
   author: henrik
   version: "1.0.0"
@@ -8,14 +8,14 @@ metadata:
 
 # C64 Development Setup Skill
 
-This skill sets up a complete Commodore 64 development environment with oscar64 compiler and c64debug MCP server integration.
+This skill sets up a complete Commodore 64 development environment with oscar64 compiler and c64-dev-tools MCP server integration.
 
 ## EXECUTION ORDER - READ THIS FIRST
 
 **YOU MUST FOLLOW THIS ORDER EXACTLY:**
 
-1. ✅ **Phase 1, Step 1.1:** Check oscar64docs MCP server - **BLOCKING**
-2. ✅ **Phase 1, Step 1.2:** Check c64debug MCP server - **BLOCKING**
+1. ✅ **Phase 1, Step 1.1:** Check oscar64-docs MCP server - **BLOCKING**
+2. ✅ **Phase 1, Step 1.2:** Check c64-dev-tools MCP server - **BLOCKING**
 3. ❓ **Phase 1, Decision Point:**
    - If BOTH MCP servers found → Continue to Step 1.4
    - If EITHER MCP server missing → Display error, use AskUserQuestion, **EXIT SKILL IMMEDIATELY**
@@ -31,9 +31,9 @@ This skill sets up a complete Commodore 64 development environment with oscar64 
 
 ## What This Skill Does
 
-1. **Validates required MCP servers FIRST** (oscar64docs and c64debug) - **BLOCKING**
-   - Checks oscar64docs MCP server
-   - Checks c64debug MCP server
+1. **Validates required MCP servers FIRST** (oscar64-docs and c64-dev-tools) - **BLOCKING**
+   - Checks oscar64-docs MCP server
+   - Checks c64-dev-tools MCP server
    - If either missing, auto-configures them in .claude/mcp.json
    - User must restart Claude Code and re-run the skill
 2. **Then checks for oscar64 compiler binary** (only after MCP servers confirmed) - **NON-BLOCKING**
@@ -47,17 +47,17 @@ This skill sets up a complete Commodore 64 development environment with oscar64 
 
 **THIS IS NOT OPTIONAL. YOU MUST EXECUTE THESE CHECKS FIRST. DO NOT SKIP. DO NOT PROCEED WITHOUT COMPLETING THESE CHECKS.**
 
-### Step 1.1: Check oscar64docs MCP Server
+### Step 1.1: Check oscar64-docs MCP Server
 
 Execute this FIRST:
 ```
-ReadMcpResourceTool(server="oscar64docs", uri="docs://oscar64/manual")
+ReadMcpResourceTool(server="oscar64-docs", uri="docs://oscar64/manual")
 ```
 
 **Expected result:** Returns the oscar64 manual content
 **If this fails:** oscar64 MCP server is NOT configured → Go to Step 1.3 (Auto-Configure and Exit)
 
-### Step 1.2: Check c64debug MCP Server
+### Step 1.2: Check c64-dev-tools MCP Server
 
 Execute this SECOND (only if Step 1.1 succeeded):
 ```
@@ -65,7 +65,7 @@ mcp__c64debug__get_session_state()
 ```
 
 **Expected result:** Returns session state (may show "not connected" but the tool exists)
-**If this fails or tool doesn't exist:** c64debug MCP server is NOT configured → Go to Step 1.3 (Block and Exit)
+**If this fails or tool doesn't exist:** c64-dev-tools MCP server is NOT configured → Go to Step 1.3 (Block and Exit)
 
 ### Step 1.3: If EITHER Check Failed - AUTO-CONFIGURE MCP SERVERS
 
@@ -103,11 +103,11 @@ AskUserQuestion({
 ```json
 {
   "mcpServers": {
-    "oscar64docs": {
+    "oscar64-docs": {
       "command": "npx",
       "args": ["-y", "oscar64-docs-mcp"]
     },
-    "c64debug": {
+    "c64-dev-tools": {
       "command": "npx",
       "args": ["-y", "c64-debug-mcp"]
     }
@@ -124,11 +124,11 @@ AskUserQuestion({
 ```json
 {
   "mcpServers": {
-    "oscar64docs": {
+    "oscar64-docs": {
       "command": "npx",
       "args": ["-y", "oscar64-docs-mcp"]
     },
-    "c64debug": {
+    "c64-dev-tools": {
       "command": "npx",
       "args": ["-y", "c64-debug-mcp"]
     }
@@ -145,8 +145,8 @@ AskUserQuestion({
 **✅ MCP SERVERS CONFIGURED (PROJECT)**
 
 I've created `.claude/mcp.json` in the current directory with the configuration for both required MCP servers:
-- **oscar64docs** (oscar64-docs-mcp via npx) - Provides compiler documentation
-- **c64debug** (c64-debug-mcp via npx) - Provides debugging and VICE integration
+- **oscar64-docs** (oscar64-docs-mcp via npx) - Provides compiler documentation
+- **c64-dev-tools** (c64-debug-mcp via npx) - Provides debugging and VICE integration
 
 These servers will only be available for this project.
 
@@ -161,8 +161,8 @@ These servers will only be available for this project.
 **✅ MCP SERVERS CONFIGURED (GLOBAL)**
 
 I've updated `~/.config/claude/config.json` with the configuration for both required MCP servers:
-- **oscar64docs** (oscar64-docs-mcp via npx) - Provides compiler documentation
-- **c64debug** (c64-debug-mcp via npx) - Provides debugging and VICE integration
+- **oscar64-docs** (oscar64-docs-mcp via npx) - Provides compiler documentation
+- **c64-dev-tools** (c64-debug-mcp via npx) - Provides debugging and VICE integration
 
 These servers will be available for all your Claude Code projects.
 
@@ -215,7 +215,7 @@ AskUserQuestion({
 
 **ONLY IF BOTH SERVERS SUCCEEDED:**
 
-If both `ReadMcpResourceTool(server="oscar64docs", ...)` succeeded AND `mcp__c64debug__get_session_state()` succeeded:
+If both `ReadMcpResourceTool(server="oscar64-docs", ...)` succeeded AND `mcp__c64debug__get_session_state()` succeeded:
 
 - ✅ Display: "✅ Both required MCP servers are configured and available"
 - ✅ Continue to Step 1.4 below
@@ -239,7 +239,7 @@ Note: oscar64 doesn't support `--version`, use `-h` instead
 **This check is non-blocking - continue to Phase 2 regardless of result.**
 
 **Note on VICE Emulator:**
-The c64debug MCP server handles VICE detection and configuration. No separate check is needed.
+The c64-dev-tools MCP server handles VICE detection and configuration. No separate check is needed.
 
 ## Phase 2: Project Structure Setup
 
@@ -273,7 +273,7 @@ clean:
 	rm -f *.prg
 
 run: $(TARGET)
-	@echo "Load $(TARGET) into VICE with c64debug tools"
+	@echo "Load $(TARGET) into VICE with c64-dev-tools"
 ```
 
 **IMPORTANT:** Only create if Makefile doesn't exist. If it exists, ask the user if they want to overwrite it.
@@ -296,7 +296,7 @@ This is a Commodore 64 project written in C and compiled with oscar64. The proje
 **CRITICAL**: This project REQUIRES two MCP servers to function. Without them, development is not possible:
 
 1. **oscar64** - Provides the complete Oscar64 manual with everything you need for C64 development
-   - Access the manual: `ReadMcpResourceTool(server="oscar64docs", uri="docs://oscar64/manual")`
+   - Access the manual: `ReadMcpResourceTool(server="oscar64-docs", uri="docs://oscar64/manual")`
    - **Contains complete working code examples and game samples:**
      - Games: Snake, Lander, Maze3D, Breakout, Connect Four, Missile Command
      - Graphics: Hires/multicolor drawing, 3D rendering, fractals, particle systems
@@ -312,11 +312,11 @@ This is a Commodore 64 project written in C and compiled with oscar64. The proje
    - **Libraries and APIs:** `<c64/vic.h>`, `<c64/sid.h>`, `<c64/kernalio.h>`, `<gfx/bitmap.h>`, etc.
    - This is not just compiler documentation - it's a complete C64 programming guide with real working code
 
-2. **c64debug** - Provides all debugging and testing capabilities
+2. **c64-dev-tools** - Provides all debugging and testing capabilities
    - Without this server, there is no way to load programs, debug code, or test the game
-   - All program execution, memory inspection, and input simulation requires c64debug tools
+   - All program execution, memory inspection, and input simulation requires c64-dev-tools
 
-**You must use these MCP servers** - they are not optional. Reference the oscar64 manual when writing C code, and use c64debug tools for all testing and debugging.
+**You must use these MCP servers** - they are not optional. Reference the oscar64 manual when writing C code, and use c64-dev-tools for all testing and debugging.
 
 ## Development Philosophy: Facts Over Guesswork
 
@@ -325,14 +325,14 @@ This is a Commodore 64 project written in C and compiled with oscar64. The proje
 This project has access to **real documentation** and **real debugging tools**. You MUST use them:
 
 ### ✅ DO: Use Real Facts
-- **Read the oscar64 manual** via `ReadMcpResourceTool(server="oscar64docs", uri="docs://oscar64/manual")`
+- **Read the oscar64 manual** via `ReadMcpResourceTool(server="oscar64-docs", uri="docs://oscar64/manual")`
   - When unsure about compiler features, syntax, or C64 APIs → READ THE MANUAL
   - When implementing graphics, sprites, scrolling, or effects → THE MANUAL HAS WORKING CODE EXAMPLES
   - Want to see how to make a game? → COMPLETE GAME EXAMPLES ARE IN THE MANUAL
   - Need to know VIC-II registers or memory layout? → IT'S ALL DOCUMENTED
   - The manual contains ACTUAL working code, not just theory - use it as reference
 
-- **Use breakpoints and real debugging** via c64debug tools
+- **Use breakpoints and real debugging** via c64-dev-tools
   - When code doesn't work as expected → SET BREAKPOINTS and INSPECT
   - When investigating crashes → READ REGISTERS and MEMORY at the crash point
   - When validating logic → STEP THROUGH THE CODE and OBSERVE actual values
@@ -348,7 +348,7 @@ This project has access to **real documentation** and **real debugging tools**. 
 
 **Guesswork is good for exploration**, but **real facts are essential for success**:
 - The oscar64 manual documents EXACTLY what the compiler supports
-- The c64debug tools show EXACTLY what the C64 is doing
+- The c64-dev-tools show EXACTLY what the C64 is doing
 - One breakpoint shows more truth than ten guesses
 - One documentation lookup prevents hours of debugging
 
@@ -365,11 +365,11 @@ Oscar64 is a C compiler specifically designed for the Commodore 64 that produces
 
 ## C64 Debugging
 
-This project is configured with the c64debug MCP server for interactive debugging. The VICE emulator must be running with remote monitor enabled.
+This project is configured with the c64-dev-tools MCP server for interactive debugging. The VICE emulator must be running with remote monitor enabled.
 
 ### Loading and Running Programs
 
-Use the c64debug tools to interact with the running C64:
+Use the c64-dev-tools to interact with the running C64:
 - `mcp__c64debug__program_load` - Load a .prg file into the emulator
 - `mcp__c64debug__execute` - Control execution (pause, resume, step, reset)
 - `mcp__c64debug__get_session_state` - Check if emulator is connected
@@ -531,8 +531,8 @@ If oscar64 compiler was detected in Phase 1, run `make` to verify the project co
 Display a comprehensive report including:
 
 1. **MCP Servers Status**
-   - oscar64: ✓ Available (confirmed - Phase 1 would have blocked if missing)
-   - c64debug: ✓ Available (confirmed - Phase 1 would have blocked if missing)
+   - oscar64-docs: ✓ Available (confirmed - Phase 1 would have blocked if missing)
+   - c64-dev-tools: ✓ Available (confirmed - Phase 1 would have blocked if missing)
 
 2. **System Tools Status**
    - oscar64 compiler: ✓ Installed / ✗ Not found
@@ -552,9 +552,9 @@ Display a comprehensive report including:
      - After installing, run `make` to build
    - **Development workflow:**
      - Build the project with `make`
-     - Load and run the program using c64debug tools
+     - Load and run the program using c64-dev-tools
      - See CLAUDE.md for complete development workflow
-     - Use c64debug MCP server for interactive debugging
+     - Use c64-dev-tools MCP server for interactive debugging
 
 ## Phase 4: Troubleshooting
 
@@ -569,13 +569,13 @@ Display a comprehensive report including:
 **Oscar64 Compiler Errors:**
 - Verify PATH includes oscar64 binary location
 - Check oscar64 version compatibility
-- Consult oscar64 manual via MCP: `ReadMcpResourceTool(server="oscar64docs", uri="docs://oscar64/manual")`
+- Consult oscar64 manual via MCP: `ReadMcpResourceTool(server="oscar64-docs", uri="docs://oscar64/manual")`
 
-**c64debug Connection Issues:**
-- Check if c64debug MCP server is properly configured
+**c64-dev-tools Connection Issues:**
+- Check if c64-dev-tools MCP server is properly configured
 - Use `mcp__c64debug__get_session_state` to check connection status
-- If VICE is not running or not configured, c64debug will provide specific guidance
-- Refer to c64debug MCP documentation for VICE setup requirements
+- If VICE is not running or not configured, c64-dev-tools will provide specific guidance
+- Refer to c64-dev-tools MCP documentation for VICE setup requirements
 
 **Permission Issues:**
 - Verify `.claude/settings.json` has all required permissions
@@ -596,14 +596,14 @@ Display a comprehensive report including:
 
 **Execute these steps in EXACT order:**
 
-**Step 1.1: Check oscar64docs MCP Server (FIRST CHECK - BLOCKING)**
+**Step 1.1: Check oscar64-docs MCP Server (FIRST CHECK - BLOCKING)**
 ```
-ReadMcpResourceTool(server="oscar64docs", uri="docs://oscar64/manual")
+ReadMcpResourceTool(server="oscar64-docs", uri="docs://oscar64/manual")
 ```
 - If succeeds → Continue to Step 1.2
 - If fails → Go to Step 1.3 (Block and Exit)
 
-**Step 1.2: Check c64debug MCP Server (SECOND CHECK - BLOCKING)**
+**Step 1.2: Check c64-dev-tools MCP Server (SECOND CHECK - BLOCKING)**
 ```
 mcp__c64debug__get_session_state()
 ```
@@ -668,7 +668,7 @@ This skill is designed to be non-destructive:
 ## Success Criteria
 
 ### Full Success (MCP servers available):
-- ✅ Both oscar64docs and c64debug MCP servers are detected and available
+- ✅ Both oscar64docs and c64-dev-tools MCP servers are detected and available
 - ✅ Project structure has been created (`src/` directory)
 - ✅ Configuration files are in place (Makefile, CLAUDE.md)
 - ✅ Example program has been created (src/main.c)
