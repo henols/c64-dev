@@ -1,96 +1,44 @@
 # C64 Development Setup Skill
 
-A Claude Code skill that automates the setup of a complete Commodore 64 development environment.
+This repository contains C64 development resources and an agent-ready skill for Commodore 64 work.
 
-## Features
+## Main skill folder
 
-- Validates MCP server availability (oscar64-docs and c64-dev-tools)
-- Checks for oscar64 compiler installation
-- Creates proper project structure with source directories
-- Generates Makefile for building C64 programs
-- Creates comprehensive CLAUDE.md with C64 development guide
-- Provides example starter program
-- Non-destructive: asks before overwriting files
+The portable packaged skill now lives in:
 
-## Usage
+- `c64-game-builder/`
 
-In Claude Code, invoke the skill with:
+That folder contains:
+- `SKILL.md` for the portable agent instructions
+- `references/` for setup and workflow notes
+- `examples/` for MCP configuration examples
+- `scripts/` for validation and packaging
+- `.github/workflows/build-skill.yml` for CI packaging
 
-```
-/c64-dev
-```
+## Legacy setup notes
 
-Or ask Claude to set up a C64 project:
-> "Set up a new C64 development project"
+A previous repo-level setup flow focused on creating a complete Commodore 64 development environment.
+The newer `c64-game-builder/` folder is the preferred location for the reusable skill package and GitHub-based distribution.
 
-## What Gets Created
+## What the packaged skill supports
 
-When you run this skill in a directory, it creates:
+- Oscar64 documentation lookup through MCP
+- VICE-backed runtime debugging through MCP
+- gameplay feature work
+- sprite and character rendering
+- joystick and keyboard input
+- memory-map decisions
+- breakpoint-driven debugging
+- visual verification in the emulator
 
-```
-.
-├── src/
-│   └── main.c                 # Example starter program
-├── Makefile                   # Build configuration
-└── CLAUDE.md                  # Development guide
-```
+## Packaging
 
-## Required MCP Servers
+The GitHub Actions workflow packages the skill from the `c64-game-builder/` subfolder and uploads `skill.zip` as an artifact.
 
-**IMPORTANT:** This skill requires both MCP servers to be configured before it can create your project:
+## Suggested MCP stack
 
-1. **oscar64-docs MCP Server** (REQUIRED) - Provides compiler documentation
-2. **c64-dev-tools MCP Server** (REQUIRED) - Provides debugging capabilities and VICE integration
+Use the skill together with:
+- `oscar64-docs-mcp`
+- `c64-debug-mcp`
 
-If either MCP server is missing, the skill will:
-- Ask if you want project-local (`.claude/mcp.json`) or global (`~/.config/claude/config.json`) configuration
-- Automatically create the configuration file with the correct MCP server settings
-- Ask you to restart Claude Code
-- Wait for you to restart and re-run the skill
-
-## Optional Components
-
-3. **oscar64 Compiler** - Compiles C code to C64 .prg files (recommended but not required for project creation)
-
-## After Setup
-
-Once setup is complete:
-
-1. Build your program:
-   ```bash
-   make
-   ```
-
-2. Load into VICE using c64-dev-tools tools:
-   ```
-   mcp__c64-dev-tools__program_load(filePath="game.prg")
-   ```
-
-3. Start coding your C64 program!
-
-If VICE is not running or not configured properly, c64-dev-tools will provide specific guidance.
-
-## Development Workflow
-
-1. Write C code in `src/` directory
-2. Build with `make`
-3. Load and run using c64-dev-tools tools
-4. Debug using breakpoints and memory inspection
-5. Test with keyboard/joystick input
-6. Capture display to verify output
-
-## Troubleshooting
-
-See the SKILL.md file Phase 4 section for detailed troubleshooting guidance on:
-- MCP server connection issues
-- Compiler errors
-- c64-dev-tools and VICE connection issues
-- Permission problems
-
-## Version
-
-1.0.0 - Initial release
-
-## Author
-
-henrik
+The goal is to support portable use across coding agents by keeping skill instructions separate from agent-specific MCP configuration.
