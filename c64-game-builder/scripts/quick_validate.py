@@ -3,8 +3,43 @@
 
 import sys
 import re
-import yaml
 from pathlib import Path
+
+
+def parse_simple_frontmatter(frontmatter_text):
+    """Parse a minimal key: value YAML frontmatter block without external deps."""
+    data = {}
+    current_key = None
+
+    for raw_line in frontmatter_text.splitlines():
+        line = raw_line.rstrip()
+        if not line.strip():
+            continue
+
+        if line.startswith(" ") or line.startswith("\t"):
+            if current_key is None:
+                raise ValueError("Indented line found before any key")
+            data[current_key] += "\n" + line.strip()
+            continue
+
+        if ":" not in line:
+            raise ValueError(f"Invalid frontmatter line: {line}")
+
+        key, value = line.split(":", 1)
+        key = key.strip()
+        value = value.strip()
+
+        if not key:
+            raise ValueError("Empty key in frontmatter")
+
+        if value.startswith(('"', "'")) and value.endswith(('"', "'")) and len(value) >= 2:
+            value = value[1:-1]
+
+        data[key] = value
+        current_key = key
+
+    return data
+
 
 def validate_skill(skill_path):
     """Basic validation of a skill directory."""
@@ -14,7 +49,7 @@ def validate_skill(skill_path):
     if not skill_md.exists():
         return False, "SKILL.md not found"
 
-    content = skill_md.read_text()
+    content = skill_md.read_text(encoding='utf-8')
     if not content.startswith('---'):
         return False, "No YAML frontmatter found"
 
@@ -25,18 +60,18 @@ def validate_skill(skill_path):
     frontmatter_text = match.group(1)
 
     try:
-        frontmatter = yaml.safe_load(frontmatter_text)
+        frontmatter = parse_simple_frontmatter(frontmatter_text)
         if not isinstance(frontmatter, dict):
-            return False, "Frontmatter must be a YAML dictionary"
-    except yaml.YAMLError as e:
-        return False, f"Invalid YAML in frontmatter: {e}"
+            return False, "Frontmatter must be a dictionary"
+    except ValueError as e:
+        return False, f"Invalid frontmatter: {e}"
 
-    ALLOWED_PROPERTIES = {'name', 'description', 'license', 'allowed-tools', 'metadata'}
-    unexpected_keys = set(frontmatter.keys()) - ALLOWED_PROPERTIES
+    allowed_properties = {'name', 'description'}
+    unexpected_keys = set(frontmatter.keys()) - allowed_properties
     if unexpected_keys:
         return False, (
             f"Unexpected key(s) in SKILL.md frontmatter: {', '.join(sorted(unexpected_keys))}. "
-            f"Allowed properties are: {', '.join(sorted(ALLOWED_PROPERTIES))}"
+            f"Allowed properties are: {', '.join(sorted(allowed_properties))}"
         )
 
     if 'name' not in frontmatter:
@@ -44,10 +79,7 @@ def validate_skill(skill_path):
     if 'description' not in frontmatter:
         return False, "Missing 'description' in frontmatter"
 
-    name = frontmatter.get('name', '')
-    if not isinstance(name, str):
-        return False, f"Name must be a string, got {type(name).__name__}"
-    name = name.strip()
+    name = frontmatter.get('name', '').strip()
     if name:
         if not re.match(r'^[a-z0-9-]+$', name):
             return False, f"Name '{name}' should be hyphen-case (lowercase letters, digits, and hyphens only)"
@@ -56,10 +88,7 @@ def validate_skill(skill_path):
         if len(name) > 64:
             return False, f"Name is too long ({len(name)} characters). Maximum is 64 characters."
 
-    description = frontmatter.get('description', '')
-    if not isinstance(description, str):
-        return False, f"Description must be a string, got {type(description).__name__}"
-    description = description.strip()
+    description = frontmatter.get('description', '').strip()
     if description:
         if '<' in description or '>' in description:
             return False, "Description cannot contain angle brackets (< or >)"
@@ -67,6 +96,7 @@ def validate_skill(skill_path):
             return False, f"Description is too long ({len(description)} characters). Maximum is 1024 characters."
 
     return True, "Skill is valid!"
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
