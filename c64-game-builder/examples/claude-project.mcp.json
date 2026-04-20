@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "oscar64-docs": {
+      "command": "npx",
+      "args": ["-y", "oscar64-docs-mcp@latest"],
+      "env": {
+        "OSCAR_MCP_CACHE_DIR": "${OSCAR_MCP_CACHE_DIR:-.cache/oscar64-mcp}"
+      }
+    },
+    "c64-debug": {
+      "command": "npx",
+      "args": ["-y", "c64-debug-mcp"],
+      "env": {}
+    }
+  }
+}
