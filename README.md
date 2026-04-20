@@ -1,10 +1,10 @@
-# C64 Development Setup Skill
+# C64 Game Builder
 
-This repository contains C64 development resources and an agent-ready skill for Commodore 64 work.
+This repository hosts an agent-ready skill for Commodore 64 game development.
 
 ## Main skill folder
 
-The portable packaged skill now lives in:
+The canonical skill lives in:
 
 - `c64-game-builder/`
 
@@ -13,14 +13,8 @@ That folder contains:
 - `references/` for setup and workflow notes
 - `examples/` for MCP configuration examples
 - `scripts/` for validation and packaging
-- `.github/workflows/build-skill.yml` for CI packaging
 
-## Legacy setup notes
-
-A previous repo-level setup flow focused on creating a complete Commodore 64 development environment.
-The newer `c64-game-builder/` folder is the preferred location for the reusable skill package and GitHub-based distribution.
-
-## What the packaged skill supports
+## What the skill supports
 
 - Oscar64 documentation lookup through MCP
 - VICE-backed runtime debugging through MCP
@@ -33,7 +27,7 @@ The newer `c64-game-builder/` folder is the preferred location for the reusable 
 
 ## Packaging
 
-The GitHub Actions workflow packages the skill from the `c64-game-builder/` subfolder and uploads `skill.zip` as an artifact.
+The GitHub Actions workflow at `.github/workflows/build-c64-game-builder.yml` packages the skill from the `c64-game-builder/` subfolder and uploads `skill.zip` as an artifact.
 
 ## Suggested MCP stack
 
