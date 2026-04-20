@@ -1,0 +1,46 @@
+name: build-c64-game-builder
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+  release:
+    types:
+      - published
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: c64-game-builder
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate skill
+        run: python scripts/quick_validate.py .
+
+      - name: Package skill
+        run: python scripts/package_skill.py . dist
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: c64-game-builder-skill-zip
+          path: c64-game-builder/dist/skill.zip
+
+      - name: Attach skill to GitHub release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: c64-game-builder/dist/skill.zip
