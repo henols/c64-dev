@@ -4,15 +4,17 @@ on:
   push:
     branches:
       - main
+    tags:
+      - 'v*'
   pull_request:
   workflow_dispatch:
-  release:
-    types:
-      - published
 
 jobs:
   package:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     defaults:
       run:
@@ -39,8 +41,9 @@ jobs:
           name: c64-game-builder-skill-zip
           path: c64-game-builder/dist/skill.zip
 
-      - name: Attach skill to GitHub release
-        if: github.event_name == 'release'
+      - name: Create or update GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           files: c64-game-builder/dist/skill.zip
+          generate_release_notes: true
